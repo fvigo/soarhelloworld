@@ -1,0 +1,8 @@
+functions:
+  hello:
+    handler: handler.hello
+    # Add the following lines:
+    events:
+      - http:
+          path: hello
+          method: post
