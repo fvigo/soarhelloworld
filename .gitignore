@@ -18,3 +18,9 @@ var/
 
 # Serverless directories
 .serverless
+
+# Serverless secrets
+secrets.yml
+
+# requirements.txt is generated via pipend
+requirements.txt
