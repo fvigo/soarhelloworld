@@ -22,5 +22,6 @@ var/
 # Serverless secrets
 secrets.yml
 
-# requirements.txt is generated via pipend
-requirements.txt
+__pycache__
+node_modules
+.python-version

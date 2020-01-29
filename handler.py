@@ -13,6 +13,8 @@ logger.setLevel(logging.INFO)
 S3_BUCKET = os.environ.get('S3_BUCKET', None)
 JSON_FILE = os.environ.get('JSON_FILE', None)
 API_KEY = os.environ.get('API_KEY', None)
+MAX_ALERTS = 10
+
 
 def unpack_exception(e):
     if not isinstance(e, BaseException):
@@ -54,7 +56,7 @@ def authenticate(event):
         
         return
 
-def get_domain(event, content):
+def domain(event, content):
     response = None
     try:
         # Check method and authenticate
@@ -70,11 +72,11 @@ def get_domain(event, content):
         if not domain:
             raise ValueError({'code': 400, 'err': 'No domain provided'})
 
-        who = whois.query(domain)
+        who = whois.whois(domain)
         if who:
             response = {
                 "statusCode": 200,
-                "body": json.dumps(who)
+                "body": str(who)
             }
         else:
             response = {
@@ -106,9 +108,16 @@ def get_alerts(event, context):
 
         # Check Severity filter
         severity = None
+        start_time = 0
+        max_alerts = 0
         query_string_parameters = event.get('queryStringParameters', None)
         if query_string_parameters:
-            severity = int(query_string_parameters.get('severity', None))
+            severity = int(query_string_parameters.get('severity', 0))
+            start_time = int(query_string_parameters.get('start_time', 0))
+            max_alerts = int(query_string_parameters.get('max_alerts', 0))
+
+        if not max_alerts:
+            max_alerts = MAX_ALERTS
 
         s3 = boto3.resource('s3')
         obj = s3.Object(S3_BUCKET, JSON_FILE)
@@ -116,8 +125,11 @@ def get_alerts(event, context):
         events = json.loads(file_content)
 
         now = int(datetime.datetime.utcnow().timestamp())
+        if not start_time or start_time >= now:
+            start_time = now - 60
 
         alerts = []
+        cnt = 0
         for e in events:
             # filter
             if severity:
@@ -125,9 +137,12 @@ def get_alerts(event, context):
                     continue
                 if e['severity'] != severity:
                     continue
-            e['created'] = now
+            e['created'] = random.randint(start_time, now)
             e['alert_id'] = str(uuid.uuid4())
             alerts.append(e)
+            cnt += 1
+            if cnt == max_alerts:
+                break
 
         response = {
             "statusCode": 200,

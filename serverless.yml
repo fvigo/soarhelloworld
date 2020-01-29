@@ -1,24 +1,6 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
-# You can always add more config options for more control.
-# We've included some commented out config examples here.
-# Just uncomment any of them to get that config option.
-#
-# For full config options, check the docs:
-#    docs.serverless.com
-#
-# Happy Coding!
-
 service: soarhelloworld
-# app and org for use with dashboard.serverless.com
 app: soarhelloworld
 org: fvigo
-
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
-# frameworkVersion: "=X.X.X"
 
 provider:
   name: aws
@@ -28,7 +10,6 @@ provider:
 #  stage: dev
 #  region: us-east-1
 
-# you can add statements to the Lambda function's IAM Role here
   iamRoleStatements:
    - Effect: "Allow"
      Action:
@@ -44,15 +25,6 @@ provider:
     JSON_FILE: "helloworld.json"
     API_KEY: ${file(./secrets.yml):API_KEY}
 
-# you can add packaging information here
-#package:
-#  include:
-#    - include-me.py
-#    - include-me-dir/**
-#  exclude:
-#    - exclude-me.py
-#    - exclude-me-dir/**
-
 functions:
   get_alerts:
     handler: handler.get_alerts
@@ -67,17 +39,12 @@ functions:
          path: domain
          method: get
 
-# you can add CloudFormation resource templates here
 resources:
  Resources:
    NewResource:
      Type: AWS::S3::Bucket
      Properties:
        BucketName: ${self:provider.environment.S3_BUCKET}
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
 
 plugins:
   - serverless-python-requirements
