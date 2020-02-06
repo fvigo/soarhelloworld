@@ -1,16 +1,21 @@
 [{
-"name":"Test Alert 1",
+"name":"The Coffee Machine Was Left On",
 "description":"This is a Hello World 1",
-"severity":3
+"severity":3,
+"user": "Anar",
+"type": "IOT",
+"location":"19th floor"
 },
 {
 "name":"Test Alert 2",
 "description":"This is a Hello World 2",
-"severity":4
+"severity":4,
+"type":"Malware"
 },
 {
 "name":"Test Alert 3",
 "description":"This is a Hello World 3",
-"severity":1
+"severity":1,
+"type":"Beer"
 }
 ]

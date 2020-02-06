@@ -22,7 +22,9 @@ provider:
 
   environment:
     S3_BUCKET: ${self:service}-${opt:stage, self:provider.stage}
-    JSON_FILE: "helloworld.json"
+    ALERT_FILE: "helloworld.json"
+    ALERT_DETAIL_FILE: "helloworldextra.json"
+    SCAN_RESULT_FILE: "helloworldscanresults.json"
     API_KEY: ${file(./secrets.yml):API_KEY}
 
 functions:
@@ -30,13 +32,56 @@ functions:
     handler: handler.get_alerts
     events:
      - http:
-         path: get_alerts
+         path: api/v1/get_alerts
          method: get
+
+  get_alert_details:
+    handler: handler.get_alert_details
+    events:
+     - http:
+         path: api/v1/get_alert_details
+         method: get
+
+  change_alert_status:
+    handler: handler.change_alert_status
+    events:
+     - http:
+         path: api/v1/change_alert_status
+         method: get
+
+  start_scan:
+    handler: handler.start_scan
+    events:
+     - http:
+         path: api/v1/start_scan
+         method: get
+
+  check_scan:
+    handler: handler.check_scan
+    events:
+     - http:
+         path: api/v1/check_scan
+         method: get
+
+  get_scan_results:
+    handler: handler.get_scan_results
+    events:
+     - http:
+         path: api/v1/get_scan_results
+         method: get
+
   domain:
     handler: handler.domain
     events:
      - http:
-         path: domain
+         path: api/v1/domain
+         method: get
+         
+  ip:
+    handler: handler.ip
+    events:
+     - http:
+         path: api/v1/ip
          method: get
 
 resources:
