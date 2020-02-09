@@ -15758,7 +15758,7 @@ def random_ip():
 def gen_scan():
     return {
         'type': ASSET_TYPES[random.randint(0,len(ASSET_TYPES)-1)],
-        'entry-id': str(uuid.uuid4()),
+        'entity-id': str(uuid.uuid4()),
         'ip_address': random_ip(),
         'vulnerability_status': VULN_STATUS[random.randint(0,len(VULN_STATUS)-1)],
         'vulns': [cves[random.randint(0,len(cves)-1)] for x in range(0,random.randint(1,5))]
