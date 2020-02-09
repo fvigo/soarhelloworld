@@ -52,7 +52,7 @@ def authenticate(event):
         authorization = headers.get('Authorization', None)
         if not authorization:
             raise ValueError({'code': 403, 'err': 'No Authorization'})
-        auth_reg = re.match('^Bearer (\w+)*$', authorization)
+        auth_reg = re.match('^Bearer ([\w+\-]*)$', authorization)
         # logger.info(f'Auth_Reg Groups is: {auth_reg.groups()}, len: {len(auth_reg.groups())}')
         if not auth_reg or len(auth_reg.groups()) != 1 or auth_reg.group(1) != API_KEY:
             raise ValueError({'code': 403, 'err': 'Invalid Authorization'})
@@ -359,10 +359,9 @@ def change_alert_status(event, context):
             raise ValueError({'code': 400, 'err': 'Invalid alert_status. Must be ACTIVE or CLOSED'})
 
         alert = {}
-
-        alert = events[random.randint(0,len(events)-1)]
+        now = int(datetime.datetime.utcnow().timestamp())
         alert['updated'] = now
-        alert['status'] = alert_status
+        alert['alert_status'] = alert_status
         alert['alert_id'] = alert_id
 
         response = {
