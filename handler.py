@@ -8,7 +8,6 @@ import re
 import random
 import whois
 import time
-import decimal
 from ipwhois import IPWhois
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -175,8 +174,8 @@ def check_scan(event, content):
             scan['status'] = "RUNNING"
             table.update_item(
                     Key={'scanId': scan_id},
-                    UpdateExpression='set called = called + :val, ttl=:ttl',
-                    ExpressionAttributeValues={':val': decimal.Decimal(1), ':ttl': int(time.time())+3600},
+                    UpdateExpression='set scanttl=:ttl',
+                    ExpressionAttributeValues={':ttl': int(time.time())+600},
             )
         else:
             x = random.randint(0,100)

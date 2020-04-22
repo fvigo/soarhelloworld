@@ -117,7 +117,7 @@ resources:
          WriteCapacityUnits: 1
        TableName: SoarHelloWorldScans
        TimeToLiveSpecification:
-         AttributeName: ttl
+         AttributeName: scanttl
          Enabled: true
 
 plugins:
