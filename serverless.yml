@@ -100,7 +100,7 @@ resources:
    NewResource:
      Type: AWS::S3::Bucket
      Properties:
-       BucketName: ${self:provider.environment.S3_BUCKET
+       BucketName: ${self:provider.environment.S3_BUCKET}
    ScansDynamoDBTable:
      Type: 'AWS::DynamoDB::Table'
      Properties:
@@ -115,10 +115,10 @@ resources:
        ProvisionedThroughput:
          ReadCapacityUnits: 1
          WriteCapacityUnits: 1
+       TableName: SoarHelloWorldScans
        TimeToLiveSpecification:
          AttributeName: ttl
          Enabled: true
-       TableName: SoarHelloWorldScans
 
 plugins:
   - serverless-python-requirements
@@ -127,8 +127,8 @@ plugins:
 
 custom:
   customDomain:
-    domainName: soar.monstersofhack.com
-    certificateName: 'soar.monstersofhack.com'
+    domainName: ${file(./secrets.yml):FQDN}
+    certificateName: ${file(./secrets.yml):FQDN}
     basePath: ''
     stage: ${self:provider.stage}
     createRoute53Record: true

@@ -7,6 +7,8 @@ import logging
 import re
 import random
 import whois
+import time
+import decimal
 from ipwhois import IPWhois
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -17,6 +19,7 @@ ALERT_DETAIL_FILE = os.environ.get('ALERT_DETAIL_FILE', None)
 SCAN_RESULT_FILE = os.environ.get('SCAN_RESULT_FILE', None)
 API_KEY = os.environ.get('API_KEY', None)
 MAX_RESULTS = 10
+SCANS_TABLE = os.environ.get('SCANS_TABLE', None)
 
 
 def unpack_exception(e):
@@ -157,13 +160,30 @@ def check_scan(event, content):
         if not scan_id:
             raise ValueError({'code': 400, 'err': 'No scan_id provided'})
 
+        # Initialize DynamoDB
+
+        dynamo = boto3.resource('dynamodb')
+        table = dynamo.Table(SCANS_TABLE)
+        
+        # Check if we already have this scan in DynamoDB - if yes return random,
+        # if not return RUNNING (first time) and write it
+        db_scan = table.get_item(Key={'scanId': scan_id})
         scan = {}
         scan['scan_id'] = scan_id
-        x = random.randint(0,100)
-        if x > 60:
+
+        if not db_scan or 'Item' not in db_scan:
             scan['status'] = "RUNNING"
+            table.update_item(
+                    Key={'scanId': scan_id},
+                    UpdateExpression='set called = called + :val, ttl=:ttl',
+                    ExpressionAttributeValues={':val': decimal.Decimal(1), ':ttl': int(time.time())+3600},
+            )
         else:
-            scan['status'] = "COMPLETE"
+            x = random.randint(0,100)
+            if x > 60:
+                scan['status'] = "RUNNING"
+            else:
+                scan['status'] = "COMPLETE"
 
         response = {
             "statusCode": 200,

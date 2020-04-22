@@ -2,7 +2,9 @@
   "name": "soarhelloworld",
   "description": "",
   "version": "0.1.0",
-  "dependencies": {},
+  "dependencies": {
+    "serverless": "^1.68.0"
+  },
   "devDependencies": {
     "serverless-domain-manager": "^3.3.1",
     "serverless-python-requirements": "^5.0.1",
