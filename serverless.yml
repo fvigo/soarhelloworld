@@ -19,12 +19,23 @@ provider:
      Action:
        - "s3:GetObject"
      Resource: "arn:aws:s3:::${self:provider.environment.S3_BUCKET}/*"
+   - Effect: "Allow"
+     Action:
+       - "dynamodb:Query"
+       - "dynamodb:Scan"
+       - "dynamodb:GetItem"
+       - "dynamodb:PutItem"
+       - "dynamodb:UpdateItem"
+       - "dynamodb:DeleteItem"
+     Resource:
+       - { "Fn::GetAtt": ["ScansDynamoDBTable", "Arn" ] }
 
   environment:
     S3_BUCKET: ${self:service}-${opt:stage, self:provider.stage}
     ALERT_FILE: "helloworld.json"
     ALERT_DETAIL_FILE: "helloworldextra.json"
     SCAN_RESULT_FILE: "helloworldscanresults.json"
+    SCANS_TABLE: "SoarHelloWorldScans"
     API_KEY: ${file(./secrets.yml):API_KEY}
 
 functions:
@@ -89,7 +100,25 @@ resources:
    NewResource:
      Type: AWS::S3::Bucket
      Properties:
-       BucketName: ${self:provider.environment.S3_BUCKET}
+       BucketName: ${self:provider.environment.S3_BUCKET
+   ScansDynamoDBTable:
+     Type: 'AWS::DynamoDB::Table'
+     Properties:
+       AttributeDefinitions:
+         -
+           AttributeName: scanId
+           AttributeType: S
+       KeySchema:
+         -
+           AttributeName: scanId
+           KeyType: HASH
+       ProvisionedThroughput:
+         ReadCapacityUnits: 1
+         WriteCapacityUnits: 1
+       TimeToLiveSpecification:
+         AttributeName: ttl
+         Enabled: true
+       TableName: SoarHelloWorldScans
 
 plugins:
   - serverless-python-requirements

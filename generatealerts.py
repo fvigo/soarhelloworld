@@ -189,7 +189,7 @@ ALERT_LOCATIONS=[
     "Area 51",
     "Seattle"
 ]
-ALERT_SEVERITIES= ["Informational", "Low", "Medium", "High", "Critical"]
+ALERT_SEVERITIES= ["Low", "Medium", "High", "Critical"]
 ALERT_USERS =[
   "Steve Ballmer",
   "3-D Man",

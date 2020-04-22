@@ -16,7 +16,7 @@ ALERT_FILE = os.environ.get('ALERT_FILE', None)
 ALERT_DETAIL_FILE = os.environ.get('ALERT_DETAIL_FILE', None)
 SCAN_RESULT_FILE = os.environ.get('SCAN_RESULT_FILE', None)
 API_KEY = os.environ.get('API_KEY', None)
-MAX_ALERTS = 10
+MAX_RESULTS = 10
 
 
 def unpack_exception(e):
@@ -66,7 +66,6 @@ def domain(event, content):
         authenticate(event)
 
         # Check Domain
-        severity = None
         query_string_parameters = event.get('queryStringParameters', None)
         if not query_string_parameters:
             raise ValueError({'code': 400, 'err': 'No domain provided'})
@@ -214,7 +213,7 @@ def get_scan_results(event, content):
         scan = {}
         scan['scan_id'] = scan_id
         scan['status'] = "COMPLETE"
-        scan['data'] = results
+        scan['entities'] = results
 
         response = {
             "statusCode": 200,
@@ -247,7 +246,6 @@ def ip(event, content):
         authenticate(event)
 
         # Check IP
-        severity = None
         query_string_parameters = event.get('queryStringParameters', None)
         if not query_string_parameters:
             raise ValueError({'code': 400, 'err': 'No ip provided'})
@@ -400,12 +398,12 @@ def get_alerts(event, context):
         if query_string_parameters:
             severity = int(query_string_parameters.get('severity', 0))
             start_time = int(query_string_parameters.get('start_time', 0))
-            max_alerts = int(query_string_parameters.get('max_alerts', 0))
+            max_results = int(query_string_parameters.get('max_results', 0))
             alert_status = query_string_parameters.get('alert_status', None)
             alert_type = query_string_parameters.get('alert_type', None)
 
-        if not max_alerts:
-            max_alerts = MAX_ALERTS
+        if not max_results:
+            max_results = MAX_RESULTS
 
         s3 = boto3.resource('s3')
         obj = s3.Object(S3_BUCKET, ALERT_FILE)
@@ -441,7 +439,7 @@ def get_alerts(event, context):
             e['alert_id'] = str(uuid.uuid4())
             alerts.append(e)
             cnt += 1
-            if cnt == max_alerts:
+            if cnt == max_results:
                 break
 
         response = {
