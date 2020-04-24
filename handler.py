@@ -428,7 +428,7 @@ def get_alerts(event, context):
             max_results = MAX_RESULTS
 
 
-        search_for_severities = SEVERITY_MAP
+        severities = SEVERITY_MAP
         if severity:
             severities = severity.split(',')
             if not all(s in SEVERITY_MAP for s in severities):
@@ -447,10 +447,10 @@ def get_alerts(event, context):
         cnt = 0
         for e in events:
             # filters
-            if search_for_severities:
+            if severities and len(severities) > 0:
                 if 'severity' not in e:
                     continue
-                if e['severity'] not in search_for_severities:
+                if e['severity'] not in severities:
                     continue
             if alert_type:
                 if 'alert_type' not in e:
