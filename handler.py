@@ -21,6 +21,9 @@ MAX_RESULTS = 10
 SCANS_TABLE = os.environ.get('SCANS_TABLE', None)
 
 
+# Severity map: 4 possible values, Low to Critical
+SEVERITY_MAP=['Low','Medium','High','Critical']
+        
 def unpack_exception(e):
     if not isinstance(e, BaseException):
         return None
@@ -415,7 +418,7 @@ def get_alerts(event, context):
         alert_status = None
         query_string_parameters = event.get('queryStringParameters', None)
         if query_string_parameters:
-            severity = int(query_string_parameters.get('severity', 0))
+            severity = query_string_parameters.get('severity', None)
             start_time = int(query_string_parameters.get('start_time', 0))
             max_results = int(query_string_parameters.get('max_results', 0))
             alert_status = query_string_parameters.get('alert_status', None)
@@ -424,6 +427,13 @@ def get_alerts(event, context):
         if not max_results:
             max_results = MAX_RESULTS
 
+
+        search_for_severities = SEVERITY_MAP
+        if severity:
+            severities = severity.split(',')
+            if not all(s in SEVERITY_MAP for s in severities):
+                raise ValueError(f'Severity must be a comma separated value including the following {",".join(SERVERITY_MAP)}')
+        
         s3 = boto3.resource('s3')
         obj = s3.Object(S3_BUCKET, ALERT_FILE)
         file_content = obj.get()['Body'].read().decode('utf-8')
@@ -437,10 +447,10 @@ def get_alerts(event, context):
         cnt = 0
         for e in events:
             # filters
-            if severity:
+            if search_for_severities:
                 if 'severity' not in e:
                     continue
-                if e['severity'] != severity:
+                if e['severity'] not in search_for_severities:
                     continue
             if alert_type:
                 if 'alert_type' not in e:

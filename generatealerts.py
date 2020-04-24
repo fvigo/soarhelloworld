@@ -15741,7 +15741,7 @@ ASSET_TYPES=[
 def gen_alerts_details(f):
     alert_type = ALERT_TYPES[random.randint(0, len(ALERT_TYPES)-1)]
     alert_status = ALERT_STATI[random.randint(0,len(ALERT_STATI)-1)]
-    severity = random.randint(0, len(ALERT_SEVERITIES)-1)
+    severity = ALERT_SEVERITIES[random.randint(0, len(ALERT_SEVERITIES)-1)]
     location = ALERT_LOCATIONS[random.randint(0, len(ALERT_LOCATIONS)-1)]
     user = ALERT_USERS[random.randint(0, len(ALERT_USERS)-1)]
     return {
@@ -15767,7 +15767,7 @@ def gen_scan():
 def gen_alerts():
     alert_type = ALERT_TYPES[random.randint(0, len(ALERT_TYPES)-1)]
     alert_status = ALERT_STATI[random.randint(0,len(ALERT_STATI)-1)]
-    severity = random.randint(0, len(ALERT_SEVERITIES)-1)
+    severity = ALERT_SEVERITIES[random.randint(0, len(ALERT_SEVERITIES)-1)]
     location = ALERT_LOCATIONS[random.randint(0, len(ALERT_LOCATIONS)-1)]
     user = ALERT_USERS[random.randint(0, len(ALERT_USERS)-1)]
     return {
