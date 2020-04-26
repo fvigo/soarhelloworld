@@ -432,7 +432,7 @@ def get_alerts(event, context):
         if severity:
             severities = severity.split(',')
             if not all(s in SEVERITY_MAP for s in severities):
-                raise ValueError(f'Severity must be a comma separated value including the following {",".join(SERVERITY_MAP)}')
+                raise ValueError(f'Severity must be a comma separated value including the following {",".join(SEVERITY_MAP)}')
         
         s3 = boto3.resource('s3')
         obj = s3.Object(S3_BUCKET, ALERT_FILE)
