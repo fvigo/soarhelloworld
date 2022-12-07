@@ -3,7 +3,7 @@
   "description": "",
   "version": "0.1.0",
   "dependencies": {
-    "serverless": "^1.83.0"
+    "serverless": "^3.25.1"
   },
   "devDependencies": {
     "serverless-domain-manager": "^3.3.2",
